@@ -88,8 +88,26 @@ router.patch('/:id', async function(req, res, next) {
 	}
 })
 
-router.delete('/:id', function(req, res, next) {
-	res.send('this is delete route')
+router.delete('/:id', async function(req, res, next) {
+	try {
+		const userId = req.params.id
+		const users = await model.users.destroy({
+			where: { id: userId }
+		})
+		if (users) {
+			res.json({
+				status: 'OK',
+				messages: 'User berhasil dihapus',
+				data: users
+			})
+		}
+	} catch (err) {
+		res.status(400).json({
+			status: 'ERROR',
+			messages: err.message,
+			data: {}
+		})
+	}
 })
 
 module.exports = router
