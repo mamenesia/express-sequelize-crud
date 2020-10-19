@@ -1,67 +1,12 @@
-var express = require("express");
-var router = express.Router();
-var model = require("../models/index");
+const express = require("express");
+const router = express.Router();
 
 const UserController = require('../controllers/UserController')
 
 /* GET users listing. */
 router.get("/", UserController.getAll);
-router.post("/", UserController.create);
-
-router.patch("/:id", async function (req, res, next) {
-  try {
-    const userId = req.params.id;
-    const { name, email, gender, phoneNumber } = req.body;
-
-    const users = await model.users.update(
-      {
-        name,
-        email,
-        gender,
-        phone_number: phoneNumber,
-      },
-      {
-        where: {
-          id: userId,
-        },
-      }
-    );
-    if (users) {
-      res.json({
-        status: "OK",
-        messages: "User berhasil diupdate",
-        data: users,
-      });
-    }
-  } catch (err) {
-    res.status(400).json({
-      status: "ERROR",
-      messages: err.message,
-      data: {},
-    });
-  }
-});
-
-router.delete("/:id", async function (req, res, next) {
-  try {
-    const userId = req.params.id;
-    const users = await model.users.destroy({
-      where: { id: userId },
-    });
-    if (users) {
-      res.json({
-        status: "OK",
-        messages: "User berhasil dihapus",
-        data: users,
-      });
-    }
-  } catch (err) {
-    res.status(400).json({
-      status: "ERROR",
-      messages: err.message,
-      data: {},
-    });
-  }
-});
+router.post("/", UserController.createData);
+router.put("/:id", UserController.updateData);
+router.delete("/:id", UserController.deleteData);
 
 module.exports = router;
