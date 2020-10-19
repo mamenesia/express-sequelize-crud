@@ -10,12 +10,12 @@ async function getAll(req, res) {
   } catch (error) {
     return res.status(400).json({
       status: "error",
-      message: "Something went wrong",
+      message: error.message,
     });
   }
 }
 
-async function create(req, res) {
+async function createData(req, res) {
   try {
     const { name, email, gender, phoneNumber } = req.body;
     const data = await User.create({
@@ -29,10 +29,71 @@ async function create(req, res) {
       status: "success",
       data,
     });
-  } catch (error) {}
+  } catch (error) {
+    return res.status(400).json({
+      status: "error",
+      message: error.message,
+    });
+  }
+}
+
+async function updateData(req, res) {
+  try {
+    const { id } = req.params;
+
+    const data = await User.findByPk(id);
+
+    if (!data) {
+      return res.status(404).json({
+        status: "error",
+        message: "user not found",
+      });
+    }
+
+    await data.update(req.body);
+
+    return res.json({
+      status: "success",
+      data,
+    });
+  } catch (error) {
+    return res.status(400).json({
+      status: "error",
+      message: error.message,
+    });
+  }
+}
+
+async function deleteData(req, res) {
+  try {
+    const { id } = req.params;
+
+    const data = await User.findByPk(id);
+
+    if (!data) {
+      return res.status(404).json({
+        status: "error",
+        message: "user not found",
+      });
+    }
+
+    await data.destroy();
+
+    return res.json({
+      status: "success",
+      message: "Data berhasil dihapus",
+    });
+  } catch (error) {
+    return res.status(400).json({
+      status: "error",
+      message: error.message,
+    });
+  }
 }
 
 module.exports = {
   getAll,
-  create,
+  createData,
+  updateData,
+  deleteData,
 };
